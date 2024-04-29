@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View, Image, Pressable } from "react-native";
 import io from "socket.io-client";
 import { useRouter } from "expo-router";
-import { hp, wp } from "../../helpers/common";
+import { hp, wp } from "../../../helpers/common";
 import { StatusBar } from "expo-status-bar";
 import Animated, { FadeInDown } from "react-native-reanimated";
-import { theme } from "../../constants/theme";
+import { theme } from "../../../constants/theme";
 import { Drawer } from "expo-router/drawer";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -45,7 +45,7 @@ const EnvScreen = () => {
     <View style={styles.container}>
       <StatusBar style="light"></StatusBar>
       <Image
-        source={require("../../assets/images/tempbg.jpg")}
+        source={require("../../../assets/images/tempbg.jpg")}
         style={styles.backgroundImage}
         resizeMode="cover"
       />

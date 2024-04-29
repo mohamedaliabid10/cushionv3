@@ -2,10 +2,10 @@ import "react-native-gesture-handler";
 import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View, Image, Pressable } from "react-native";
 import { useRouter } from "expo-router";
-import { hp, wp } from "../../helpers/common";
+import { hp, wp } from "../../../helpers/common";
 import { StatusBar } from "expo-status-bar";
 import Animated, { FadeInDown } from "react-native-reanimated";
-import { theme } from "../../constants/theme";
+import { theme } from "../../../constants/theme";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 
@@ -16,7 +16,7 @@ const HomeScreen = () => {
     <View style={styles.container}>
       <StatusBar style="light"></StatusBar>
       <Image
-        source={require("../../assets/images/v915-wit-010-d.jpg")}
+        source={require("../../../assets/images/v915-wit-010-d.jpg")}
         style={styles.backgroundImage}
         resizeMode="cover"
       />
@@ -33,7 +33,7 @@ const HomeScreen = () => {
           </Animated.View>
         </View>
         <Animated.Image
-          source={require("../../assets/images/posture.png")}
+          source={require("../../../assets/images/posture.png")}
           style={styles.logo}
           resizeMode="contain"
         />
