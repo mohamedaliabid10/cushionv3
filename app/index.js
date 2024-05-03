@@ -47,7 +47,7 @@ const WelcomeScreen = () => {
             ></Image>
           </View>
           <Animated.Image
-            source={require("../assets/images/pillow.png")}
+            source={require("../assets/images/file.png")}
             style={styles.logo}
             resizeMode="contain"
           />
@@ -61,7 +61,7 @@ const WelcomeScreen = () => {
             entering={FadeInDown.delay(500).springify()}
             style={styles.punchline}
           >
-            We Love Taking Care Of You
+            To make your back pain go away
           </Animated.Text>
           <Animated.View entering={FadeInDown.delay(600).springify()}>
             <Pressable
@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
   logo: {
-    width: wp(50),
+    width: wp(65),
     height: hp(50),
     position: "relative",
   },
