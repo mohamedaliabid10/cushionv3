@@ -43,7 +43,7 @@ const EnvScreen = () => {
 
   return (
     <View style={styles.container}>
-      <StatusBar style="light"></StatusBar>
+      <StatusBar style="dark"></StatusBar>
       <Image
         source={require("../../../assets/images/tempbg.jpg")}
         style={styles.backgroundImage}

@@ -11,7 +11,7 @@ const WelcomeScreen = () => {
   const router = useRouter();
   return (
     <View style={styles.container}>
-      <StatusBar style="light"></StatusBar>
+      <StatusBar style="dark"></StatusBar>
       <Image
         source={require("../assets/images/5595248.jpg")}
         style={styles.backgroundImage}

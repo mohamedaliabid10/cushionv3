@@ -14,7 +14,7 @@ const HomeScreen = () => {
   const router = useRouter();
   return (
     <View style={styles.container}>
-      <StatusBar style="light"></StatusBar>
+      <StatusBar style="dark"></StatusBar>
       <Image
         source={require("../../../assets/images/v915-wit-010-d.jpg")}
         style={styles.backgroundImage}
