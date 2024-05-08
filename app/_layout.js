@@ -11,6 +11,10 @@ export default function RootLayout() {
         name="(drawer)"
         options={{ headerShown: false }}
       ></Stack.Screen>
+      <Stack.Screen
+        name="ExercicesModal"
+        options={{ presentation: "modal" }}
+      ></Stack.Screen>
     </Stack>
   );
 }

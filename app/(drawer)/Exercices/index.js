@@ -5,24 +5,34 @@ import {
   Image,
   StyleSheet,
   Platform,
+  TouchableOpacity,
 } from "react-native";
 import { StatusBar } from "react-native";
 import React from "react";
 import { hp, wp } from "../../../helpers/common";
 import { theme } from "../../../constants/theme";
+import { useRouter } from "expo-router";
 const Exercice = () => {
+  const router = useRouter();
   return (
     <ScrollView style={styles.container}>
       <StatusBar style="light" />
       <View style={styles.TextView}>
         <Text style={styles.Title}>Stretching Exercices</Text>
       </View>
-      <View style={styles.ImageContainer}>
+      <TouchableOpacity
+        style={styles.ImageContainer}
+        onPress={() =>
+          router.push({
+            pathname: "/ExercicesModal",
+          })
+        }
+      >
         <Image
           source={require("../../../assets/images/stretching1.gif")}
           style={styles.stretchingImage}
         />
-      </View>
+      </TouchableOpacity>
       <View style={styles.ImageContainer}>
         <Image
           source={require("../../../assets/images/stretching2.gif")}
