@@ -59,7 +59,8 @@ const DrawerLayout = () => {
           options={{
             headerTintColor: "black",
             headerTransparent: true,
-            headerTitleStyle: { display: "none" },
+            headerTitle: "Stretching Exercises",
+            // headerTitleStyle: { display: "none" },
             drawerLabel: "Stretching Exercices",
             drawerIcon: ({ size, color }) => (
               <MaterialIcons

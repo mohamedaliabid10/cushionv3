@@ -13,7 +13,7 @@ export default function RootLayout() {
       ></Stack.Screen>
       <Stack.Screen
         name="ExercicesModal"
-        options={{ presentation: "modal" }}
+        options={{ presentation: "modal", headerShown: false }}
       ></Stack.Screen>
     </Stack>
   );

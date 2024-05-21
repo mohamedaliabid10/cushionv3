@@ -1,75 +1,55 @@
 import {
   View,
-  Text,
-  ScrollView,
   Image,
   StyleSheet,
   Platform,
   TouchableOpacity,
+  FlatList,
 } from "react-native";
-import { StatusBar } from "react-native";
 import React from "react";
 import { hp, wp } from "../../../helpers/common";
 import { theme } from "../../../constants/theme";
 import { useRouter } from "expo-router";
+import { ExercicesDetails } from "../../../constants/ExercicesDetails";
 const Exercice = () => {
+  return (
+    <View style={styles.container}>
+      <FlatList
+        style={styles.FlatListStyle}
+        data={ExercicesDetails}
+        numColumns={1}
+        keyExtractor={(item) => item.name}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 50, paddingTop: 20 }}
+        renderItem={({ item, index }) => (
+          <ExerciceCard index={index} item={item} />
+        )}
+      />
+    </View>
+  );
+};
+
+const ExerciceCard = ({ item, index }) => {
   const router = useRouter();
   return (
-    <ScrollView style={styles.container}>
-      <StatusBar style="light" />
-      <View style={styles.TextView}>
-        <Text style={styles.Title}>Stretching Exercices</Text>
-      </View>
+    <View style={{ flex: 1 }}>
       <TouchableOpacity
         style={styles.ImageContainer}
-        onPress={() =>
+        onPress={() => {
+          console.log("Selected Item:", item);
           router.push({
-            pathname: "/ExercicesModal",
-          })
-        }
+            pathname: "/ExercicesModal/ExerModal",
+            params: item,
+          });
+        }}
       >
         <Image
-          source={require("../../../assets/images/stretching1.gif")}
+          source={item.image}
+          resizeMode="cover"
           style={styles.stretchingImage}
         />
       </TouchableOpacity>
-      <View style={styles.ImageContainer}>
-        <Image
-          source={require("../../../assets/images/stretching2.gif")}
-          style={styles.stretchingImage}
-        />
-      </View>
-      <View style={styles.ImageContainer}>
-        <Image
-          source={require("../../../assets/images/stretching3.gif")}
-          style={styles.stretchingImage}
-        />
-      </View>
-      <View style={styles.ImageContainer}>
-        <Image
-          source={require("../../../assets/images/stretching4.gif")}
-          style={styles.stretchingImage}
-        />
-      </View>
-      <View style={styles.ImageContainer}>
-        <Image
-          source={require("../../../assets/images/stretching5.gif")}
-          style={styles.stretchingImage}
-        />
-      </View>
-      <View style={styles.ImageContainer}>
-        <Image
-          source={require("../../../assets/images/stretching6.gif")}
-          style={styles.stretchingImage}
-        />
-      </View>
-      <View style={styles.ImageContainer}>
-        <Image
-          source={require("../../../assets/images/stretching7.gif")}
-          style={styles.stretchingImage}
-        />
-      </View>
-    </ScrollView>
+    </View>
   );
 };
 
@@ -88,10 +68,8 @@ const styles = StyleSheet.create({
   },
   TextView: {
     marginTop: hp(6.5),
-    alignItems: "center",
     justifyContent: "center",
-    flex: 1,
-    marginBottom: hp(1),
+    alignItems: "center",
   },
   Title: {
     color: "#000000",
@@ -109,6 +87,7 @@ const styles = StyleSheet.create({
 
     elevation: 19,
   },
+  FlatListStyle: { marginTop: hp(10) },
 });
 
 export default Exercice;
