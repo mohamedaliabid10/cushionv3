@@ -4,29 +4,36 @@ import io from "socket.io-client";
 import { useRouter } from "expo-router";
 import { hp, wp } from "../../../helpers/common";
 import { StatusBar } from "expo-status-bar";
-import Animated, { FadeInDown } from "react-native-reanimated";
-import { theme } from "../../../constants/theme";
-import { Drawer } from "expo-router/drawer";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-const socket = io("http://192.168.43.50:3003");
+
+const socket = io("http://192.168.43.134:3003");
 
 const EnvScreen = () => {
-  const [data, setData] = useState({ temperature: null, humidity: null });
+  const [data, setData] = useState({
+    temperature: null,
+    humidity: null,
+    voc_index: null,
+  });
+
   useEffect(() => {
     const fetchData = () => {
-      fetch("http://192.168.43.50:3003/get")
+      fetch("http://192.168.43.134:3003/get")
         .then((response) => response.json())
         .then((newData) => {
-          setData(newData);
+          if (newData.dht11) {
+            setData(newData.dht11);
+          }
         })
         .catch((error) => {
           console.error("Error fetching data:", error);
         });
     };
 
-    socket.on("update_data", () => {
-      fetchData();
+    socket.on("update_data", (newData) => {
+      if (newData.dht11) {
+        setData(newData.dht11);
+      }
     });
 
     socket.on("connect", () => {
@@ -59,7 +66,9 @@ const EnvScreen = () => {
       </View>
       <View style={styles.HumidText}>
         <FontAwesome5 name="radiation-alt" size={24} color="black" />
-        <Text style={styles.label}>Co2:</Text>
+        <Text style={styles.label}>
+          Voc: {data.voc_index && data.voc_index.toFixed(0)}
+        </Text>
       </View>
     </View>
   );

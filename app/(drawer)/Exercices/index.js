@@ -36,7 +36,7 @@ const ExerciceCard = ({ item, index }) => {
       <TouchableOpacity
         style={styles.ImageContainer}
         onPress={() => {
-          console.log("Selected Item:", item);
+          // console.log("Selected Item:", item);
           router.push({
             pathname: "/ExercicesModal/ExerModal",
             params: item,

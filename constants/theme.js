@@ -3,6 +3,8 @@ export const theme = {
     white: "#fff",
     black: "000",
     grayBG: "#e5e5e5",
+    active: "green",
+    inactive: "red",
     //neural
     neutral: (opacity) => `rgba(10, 10, 10, ${opacity})`,
   },
