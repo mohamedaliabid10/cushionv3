@@ -1,15 +1,24 @@
 import "react-native-gesture-handler";
-import React, { useState, useEffect, useRef } from "react";
-import { StyleSheet, Text, View, Image, Pressable, Alert } from "react-native";
+import React, { useState, useEffect } from "react";
+import { StyleSheet, Text, View, Image, Pressable } from "react-native";
 import { useRouter } from "expo-router";
 import { hp, wp } from "../../../helpers/common";
 import { StatusBar } from "expo-status-bar";
 import Animated from "react-native-reanimated";
 import { theme } from "../../../constants/theme";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import io from "socket.io-client";
+import * as Notifications from "expo-notifications";
 
 const socket = io("http://192.168.43.134:3003");
+
+// Configure notifications
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+  }),
+});
 
 const HomeScreen = () => {
   const router = useRouter();
@@ -20,76 +29,157 @@ const HomeScreen = () => {
   const [lastStateChangeTime, setLastStateChangeTime] = useState(
     new Date().getTime()
   );
+  const [posture, setPosture] = useState(1); // Initial posture set to 1
+  const [badPostureStartTime, setBadPostureStartTime] = useState(null);
+  const [updatePosture, setUpdatePosture] = useState(false); // State to start updating posture after 33 seconds
+
+  // Request notification permissions
+  useEffect(() => {
+    const getPermissions = async () => {
+      const { status } = await Notifications.requestPermissionsAsync();
+      if (status !== "granted") {
+        alert(
+          "You need to enable notifications permissions to use this feature."
+        );
+      }
+    };
+    getPermissions();
+  }, []);
+
+  const scheduleNotification = async (title, body) => {
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title,
+        body,
+        sound: "default",
+      },
+      trigger: null,
+    });
+  };
 
   const checkAlerts = () => {
     const now = new Date().getTime();
 
-    if (status === "Empty" && fsrData.elapsed_time > 60) {
+    if (status === "Empty" && fsrData.elapsed_time > 3600) {
       if (!lastEmptyAlertTime || now - lastEmptyAlertTime >= 120000) {
-        // 2 minutes
-        Alert.alert("Notification", "You need to come back");
+        scheduleNotification("Notification", "You need to come back");
         setLastEmptyAlertTime(now);
       }
     }
 
-    if (status === "Occupied" && fsrData.elapsed_time > 90) {
+    if (status === "Occupied" && fsrData.elapsed_time > 3600) {
       if (!lastOccupiedAlertTime || now - lastOccupiedAlertTime >= 120000) {
-        // 2 minutes
-        Alert.alert("Notification", "You need to take a break");
+        scheduleNotification("Notification", "You need to take a break");
         setLastOccupiedAlertTime(now);
       }
+    }
+
+    if (status === "Occupied" && posture !== 1) {
+      if (badPostureStartTime === null) {
+        setBadPostureStartTime(now);
+      } else if (now - badPostureStartTime >= 30000) {
+        // 1 hour in milliseconds
+        scheduleNotification(
+          "Posture Alert",
+          "You have been sitting in a bad posture for an hour. Please fix your posture."
+        );
+        setBadPostureStartTime(now);
+      }
+    } else {
+      setBadPostureStartTime(null);
     }
   };
 
   useEffect(() => {
-    const fetchData = () => {
-      fetch("http://192.168.43.134:3003/get")
-        .then((response) => response.json())
-        .then((newData) => {
-          setFsrData(newData.fsr);
-          const newStatus = newData.fsr.fsr_sum > 100 ? "Occupied" : "Empty";
-          if (newStatus !== status) {
-            setLastStateChangeTime(new Date().getTime());
-          }
-          setStatus(newStatus);
-        })
-        .catch((error) => {
-          console.error("Error fetching data:", error);
-        });
+    const fetchData = async () => {
+      try {
+        const response = await fetch("http://192.168.43.134:3003/get");
+        const newData = await response.json();
+        setFsrData(newData.fsr);
+        const newPosture = newData.posture.posture;
+        if (updatePosture) {
+          // Only update posture if the flag is true
+          setPosture(newPosture);
+        }
+        const newStatus = newData.fsr.fsr_sum > 300 ? "Occupied" : "Empty";
+        if (newStatus !== status) {
+          setLastStateChangeTime(new Date().getTime());
+        }
+        setStatus(newStatus);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
     };
 
     socket.on("update_data", (newData) => {
       setFsrData(newData.fsr);
-      const newStatus = newData.fsr.fsr_sum > 100 ? "Occupied" : "Empty";
+      const newPosture = newData.posture.posture;
+      if (updatePosture) {
+        // Only update posture if the flag is true
+        setPosture(newPosture);
+      }
+      const newStatus = newData.fsr.fsr_sum > 300 ? "Occupied" : "Empty";
       if (newStatus !== status) {
         setLastStateChangeTime(new Date().getTime());
       }
       setStatus(newStatus);
     });
 
-    socket.on("connect", () => {
-      fetchData();
-    });
+    socket.on("connect", fetchData);
 
     return () => {
       socket.off("update_data");
       socket.off("connect");
     };
-  }, [status]);
+  }, [status, updatePosture]);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
       const now = new Date().getTime();
       if (now - lastStateChangeTime >= 5000) {
-        // 5 seconds delay after state change
         checkAlerts();
       }
-    }, 1000); // Check every second
+    }, 1000);
 
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, [fsrData.elapsed_time, status, lastStateChangeTime]);
+    return () => clearInterval(intervalId);
+  }, [
+    fsrData.elapsed_time,
+    status,
+    lastStateChangeTime,
+    posture,
+    badPostureStartTime,
+  ]);
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      setUpdatePosture(true);
+    }, 33000); // 33 seconds
+
+    return () => clearTimeout(timeoutId);
+  }, []);
+
+  const getPostureImage = (posture) => {
+    switch (posture) {
+      case 1:
+        return require("../../../assets/images/posture1.png");
+      case 2:
+        return require("../../../assets/images/posture2.png");
+      case 3:
+        return require("../../../assets/images/posture3.png");
+      case 4:
+        return require("../../../assets/images/posture4.png");
+      case 5:
+        return require("../../../assets/images/posture5.png");
+      case 6:
+        return require("../../../assets/images/posture6.png");
+      case 7:
+        return require("../../../assets/images/posture7.png");
+      case 8:
+        return require("../../../assets/images/posture8.png");
+      default:
+        return require("../../../assets/images/korsi.png");
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -114,22 +204,12 @@ const HomeScreen = () => {
         <Animated.Image
           source={
             status === "Occupied"
-              ? require("../../../assets/images/posture.png")
+              ? getPostureImage(posture)
               : require("../../../assets/images/korsi.png")
           }
           style={styles.logo}
           resizeMode="contain"
         />
-        {/* <View style={styles.textContainer}>
-          <View style={styles.TempButton}>
-            <Text style={styles.TempText}>27 </Text>
-            <MaterialCommunityIcons
-              name="temperature-celsius"
-              size={16}
-              color="white"
-            />
-          </View>
-        </View> */}
         <View style={styles.textContainer}>
           <View style={styles.StatusButton}>
             <Text
@@ -187,22 +267,6 @@ const styles = StyleSheet.create({
     width: wp(70),
     height: hp(40),
     marginTop: 50,
-  },
-  TempButton: {
-    alignItems: "center",
-    flexDirection: "row",
-    backgroundColor: theme.colors.neutral(0.8),
-    padding: 17,
-    paddingHorizontal: 40,
-    borderRadius: theme.radius.xl,
-    borderCurve: "continuous",
-    marginTop: 100,
-  },
-  TempText: {
-    color: theme.colors.white,
-    fontSize: hp(2),
-    fontWeight: theme.fontWeights.medium,
-    letterSpacing: 1,
   },
   StatusButton: {
     alignItems: "center",

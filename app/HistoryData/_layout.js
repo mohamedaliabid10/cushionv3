@@ -1,25 +1,25 @@
+import { View, Text } from "react-native";
+import React from "react";
 import { Stack } from "expo-router";
 
-export default function RootLayout() {
+export default function HistoryDataLayout() {
   return (
     <Stack>
       <Stack.Screen
-        name="index"
+        name="DailyView"
         options={{ headerShown: false }}
       ></Stack.Screen>
       <Stack.Screen
-        name="(drawer)"
+        name="WeeklyView"
         options={{ headerShown: false }}
       ></Stack.Screen>
       <Stack.Screen
-        name="ExercicesModal"
-        options={{ presentation: "modal", headerShown: false }}
+        name="MonthlyView"
+        options={{ headerShown: false }}
       ></Stack.Screen>
       <Stack.Screen
-        name="HistoryData"
-        options={{
-          headerShown: false,
-        }}
+        name="SelectDateView"
+        options={{ headerShown: false }}
       ></Stack.Screen>
     </Stack>
   );

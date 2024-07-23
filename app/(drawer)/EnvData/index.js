@@ -70,6 +70,12 @@ const EnvScreen = () => {
           Voc: {data.voc_index && data.voc_index.toFixed(0)}
         </Text>
       </View>
+      <View>
+        <Image
+          source={require("../../../assets/images/voc.png")}
+          style={styles.voc_image}
+        ></Image>
+      </View>
     </View>
   );
 };
@@ -99,6 +105,11 @@ const styles = StyleSheet.create({
   HumidText: {
     alignItems: "center",
     flexDirection: "row",
+  },
+  voc_image: {
+    width: wp(100),
+    height: 60,
+    marginTop: 50,
   },
 });
 

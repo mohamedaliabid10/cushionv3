@@ -1,124 +1,103 @@
-import { View, Text } from "react-native";
-import { PieChart } from "react-native-gifted-charts";
-import React from "react";
+import React, { useState } from "react";
+import { View, Text, Pressable, StyleSheet } from "react-native";
+import Animated from "react-native-reanimated";
+import { useRouter } from "expo-router";
+import { theme } from "../../../constants/theme";
+import { hp, wp } from "../../../helpers/common";
 
 const PostureHistoryScreen = () => {
-  const renderLegend = (text, color) => {
-    return (
-      <View style={{ flexDirection: "row" }}>
-        <View
-          style={{
-            height: 18,
-            width: 18,
-            marginRight: 10,
-            borderRadius: 4,
-            backgroundColor: color || "white",
-          }}
-        />
-        <Text style={{ color: "white", fontSize: 14 }}>{text || ""}</Text>
-      </View>
-    );
-  };
+  const router = useRouter();
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        backgroundColor: "#FF8C42",
-      }}
-    >
-      <View
-        style={{
-          marginVertical: 100,
-          marginHorizontal: 30,
-          borderRadius: 10,
-          paddingVertical: 50,
-          backgroundColor: "#5B7C99",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        {/*********************    Custom Header component      ********************/}
-        <Text
-          style={{
-            color: "white",
-            fontSize: 32,
-            fontWeight: "bold",
-            marginBottom: 12,
-          }}
-        >
-          Posture History
-        </Text>
-        {/****************************************************************************/}
-
-        <PieChart
-          strokeColor="white"
-          strokeWidth={4}
-          donut
-          data={[
-            { value: 30, color: "rgb(84,219,234)", textColor: "black" },
-            { value: 40, color: "lightgreen", textColor: "black" },
-            { value: 20, color: "#8FB3AB", textColor: "black" },
-          ]}
-          innerCircleColor="#414141"
-          innerCircleBorderWidth={4}
-          innerCircleBorderColor={"white"}
-          showValuesAsLabels={true}
-          showText
-          textSize={18}
-          showTextBackground={true}
-          centerLabelComponent={() => {
-            return (
-              <View>
-                <Text style={{ color: "white", fontSize: 36 }}>90</Text>
-                <Text style={{ color: "white", fontSize: 18 }}>Total</Text>
-              </View>
-            );
-          }}
-        />
-
-        {/*********************    Custom Legend component      ********************/}
-        <View
-          style={{
-            width: "100%",
-            flexDirection: "row",
-            justifyContent: "space-evenly",
-            marginTop: 20,
-          }}
-        >
-          {renderLegend("Posture 1", "rgb(84,219,234)")}
-          {renderLegend("Posture 2", "lightgreen")}
-          {renderLegend("Posture 3", "#8FB3AB")}
+    <View style={styles.container}>
+      <View style={styles.contentContainer}>
+        <View style={styles.buttonContainer}>
+          <Pressable
+            onPress={() =>
+              router.push({
+                pathname: "/HistoryData/DailyView",
+              })
+            }
+            style={styles.Button}
+          >
+            <Text style={styles.Text}>Daily</Text>
+          </Pressable>
+          <Pressable
+            onPress={() =>
+              router.push({
+                pathname: "/HistoryData/WeeklyView",
+              })
+            }
+            style={styles.Button}
+          >
+            <Text style={styles.Text}>Weekly</Text>
+          </Pressable>
+          <Pressable
+            onPress={() =>
+              router.push({
+                pathname: "/HistoryData/MonthlyView",
+              })
+            }
+            style={styles.Button}
+          >
+            <Text style={styles.Text}>Monthly</Text>
+          </Pressable>
+          <Pressable
+            onPress={() =>
+              router.push({
+                pathname: "/HistoryData/SelectDateView",
+              })
+            }
+            style={styles.Button}
+          >
+            <Text style={styles.Text}>Select Date</Text>
+          </Pressable>
         </View>
-        <View
-          style={{
-            width: "100%",
-            flexDirection: "row",
-            justifyContent: "space-evenly",
-            marginTop: 20,
-          }}
-        >
-          {renderLegend("Posture 4", "rgb(84,219,234)")}
-          {renderLegend("Posture 5", "lightgreen")}
-          {renderLegend("Posture 6", "#8FB3AB")}
-        </View>
-        <View
-          style={{
-            width: "100%",
-            flexDirection: "row",
-            justifyContent: "space-evenly",
-            marginTop: 20,
-          }}
-        >
-          {renderLegend("Posture 7", "rgb(84,219,234)")}
-          {renderLegend("Posture 8", "lightgreen")}
-          {renderLegend("Posture 9", "#8FB3AB")}
-        </View>
-
-        {/****************************************************************************/}
       </View>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#FF8C42",
+  },
+  buttonContainer: {
+    flexDirection: "column",
+    justifyContent: "space-evenly",
+    padding: 10,
+    marginBottom: 20,
+  },
+  button: {
+    backgroundColor: "#007AFF", // iOS blue
+    padding: 10,
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: "white",
+    fontWeight: "bold",
+  },
+  contentContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  Button: {
+    backgroundColor: theme.colors.neutral(0.8),
+    padding: 17,
+    paddingHorizontal: 60,
+    marginVertical: 10,
+    borderRadius: theme.radius.xl,
+    borderCurve: "continuous",
+    marginTop: 14,
+  },
+  Text: {
+    color: theme.colors.white,
+    fontSize: hp(2),
+    fontWeight: theme.fontWeights.medium,
+    letterSpacing: 1,
+    alignSelf: "center",
+  },
+});
 
 export default PostureHistoryScreen;
