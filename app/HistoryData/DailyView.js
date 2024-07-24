@@ -36,9 +36,7 @@ const PostureHistoryScreen = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(
-          "http://192.168.43.134:3003/history/daily"
-        );
+        const response = await fetch("http://192.168.43.79:3003/history/daily");
         const { data, date_range } = await response.json(); // Destructure to get date_range
 
         const processedData = data.map((item) => ({

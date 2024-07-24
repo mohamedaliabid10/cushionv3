@@ -52,7 +52,7 @@ const PostureHistoryScreen = () => {
       setLoading(true);
       try {
         const response = await fetch(
-          `http://192.168.43.134:3003/history/range?date_range=${encodeURIComponent(
+          `http://192.168.43.79:3003/history/range?date_range=${encodeURIComponent(
             `${formatDate(startDate)} to ${formatDate(endDate)}`
           )}`
         );

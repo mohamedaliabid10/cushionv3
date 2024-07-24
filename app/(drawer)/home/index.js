@@ -9,7 +9,7 @@ import { theme } from "../../../constants/theme";
 import io from "socket.io-client";
 import * as Notifications from "expo-notifications";
 
-const socket = io("http://192.168.43.134:3003");
+const socket = io("http://192.168.43.79:3003"); //flask api
 
 // Configure notifications
 Notifications.setNotificationHandler({
@@ -61,14 +61,18 @@ const HomeScreen = () => {
     const now = new Date().getTime();
 
     if (status === "Empty" && fsrData.elapsed_time > 3600) {
+      //wakt mich yarjaa bil second
       if (!lastEmptyAlertTime || now - lastEmptyAlertTime >= 120000) {
+        //rappel apres 2min (millisecond)
         scheduleNotification("Notification", "You need to come back");
         setLastEmptyAlertTime(now);
       }
     }
 
     if (status === "Occupied" && fsrData.elapsed_time > 3600) {
+      //sedentary time bil second
       if (!lastOccupiedAlertTime || now - lastOccupiedAlertTime >= 120000) {
+        //rappel apres 2min (millisecond)
         scheduleNotification("Notification", "You need to take a break");
         setLastOccupiedAlertTime(now);
       }
@@ -78,7 +82,7 @@ const HomeScreen = () => {
       if (badPostureStartTime === null) {
         setBadPostureStartTime(now);
       } else if (now - badPostureStartTime >= 30000) {
-        // 1 hour in milliseconds
+        // kadesh ando wakt kaid fi posture khayba (milliseconds)
         scheduleNotification(
           "Posture Alert",
           "You have been sitting in a bad posture for an hour. Please fix your posture."
@@ -93,7 +97,7 @@ const HomeScreen = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("http://192.168.43.134:3003/get");
+        const response = await fetch("http://192.168.43.79:3003/get");
         const newData = await response.json();
         setFsrData(newData.fsr);
         const newPosture = newData.posture.posture;
