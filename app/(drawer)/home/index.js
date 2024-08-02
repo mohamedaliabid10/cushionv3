@@ -9,7 +9,7 @@ import { theme } from "../../../constants/theme";
 import io from "socket.io-client";
 import * as Notifications from "expo-notifications";
 
-const socket = io("http://192.168.43.79:3003"); //flask api
+const socket = io("http://192.168.43.79:3003"); //flask
 
 // Configure notifications
 Notifications.setNotificationHandler({
